@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+    <title>POP&SIP - Flavored Syrup Pods</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; overflow-x: hidden; background: #000; color: #111; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        nav { display:flex; justify-content:space-between; align-items:center; padding:1rem 0; }
+        .logo { font-size:2rem; font-weight:800; background:linear-gradient(45deg,#ff6b6b,#4ecdc4,#45b7d1); background-size:200% 200%; -webkit-background-clip:text; -webkit-text-fill-color:transparent; animation:gradientShift 3s ease-in-out infinite; }
+        .nav-links { display:flex; list-style:none; gap:1.5rem; align-items:center; }
+        .nav-links a { text-decoration:none; color:#333; font-weight:500; position:relative; transition: all .25s ease; }
+        .nav-links a:hover { color:#ff6b6b; transform:translateY(-2px); }
+        .nav-links a::after { content:''; position:absolute; left:0; bottom:-5px; width:0; height:2px; background:linear-gradient(45deg,#ff6b6b,#4ecdc4); transition:width .25s ease; }
+        .nav-links a:hover::after { width:100%; }
+
+        /* Hero */
+        .hero { height:100vh; display:flex; align-items:center; position:relative; overflow:hidden; padding-top:70px; }
+        .hero-content { display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center; z-index:2; width:100%; }
+        .hero-text h1 { font-size:4rem; font-weight:800; color:white; margin-bottom:1rem; animation:slideInLeft 1s ease-out; letter-spacing: .02em; }
+        .subtitle { font-size:1.5rem; color:rgba(255,255,255,0.92); margin-bottom:1rem; animation:slideInLeft 1s ease-out .15s both; }
+        .hero-text p { font-size:1.05rem; color:rgba(255,255,255,0.85); margin-bottom:1.5rem; line-height:1.6; animation:slideInLeft 1s ease-out .3s both; }
+        .cta-button { background:linear-gradient(45deg,#ff6b6b,#4ecdc4); color:white; padding:1rem 1.6rem; border-radius:50px; font-weight:600; text-decoration:none; display:inline-block; box-shadow:0 10px 30px rgba(0,0,0,0.2); transition:all .25s ease; margin-right:10px; }
+        .cta-button:hover { transform:translateY(-3px); box-shadow:0 15px 40px rgba(0,0,0,0.28); background:linear-gradient(45deg,#4ecdc4,#ff6b6b); }
+
+        .hero-visual { display:flex; justify-content:center; align-items:center; animation:slideInRight 1s ease-out; }
+        .pod-container { position:relative; width:400px; height:400px; }
+
+        /* Pods */
+        .pod { width:80px; height:120px; border-radius:40px 40px 20px 20px; position:absolute; cursor:pointer; transition:all .3s ease; animation:float 3s ease-in-out infinite; box-shadow:0 10px 30px rgba(0,0,0,0.2); }
+        .pod:hover { transform:translateY(-10px) scale(1.08); box-shadow:0 20px 40px rgba(0,0,0,0.3); }
+        .pod.blue-lagoon { background:linear-gradient(135deg,#00c6ff,#0072ff); top:50px; left:50px; animation-delay:0s; }
+        .pod.mojito { background:linear-gradient(135deg,#7fdfb0,#5cb85c); top:100px; right:80px; animation-delay:1s; }
+        .pod.o-ranger { background:linear-gradient(135deg,#ff9500,#ff6600); bottom:150px; left:100px; animation-delay:2s; }
+        .pod.black-bijli { background:linear-gradient(135deg,#1a1a1a,#4a4a4a); border:2px solid #ff0080; bottom:80px; right:50px; animation-delay:.5s; }
+        .pod.peachy-ice-t { background:linear-gradient(135deg,#ffb347,#ff6961); top:200px; left:200px; animation-delay:1.5s; }
+
+        /* Company Brand */
+        .company-brand { padding:8rem 0; background:#000; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; min-height:70vh; }
+        .brand-text { font-size:8rem; font-weight:900; color:white; text-align:center; z-index:10; position:relative; letter-spacing:.08em; text-shadow:0 0 20px rgba(255,255,255,0.2); animation:brandPulse 3s ease-in-out infinite; }
+        @keyframes brandPulse { 0%,100%{transform:scale(1)}50%{transform:scale(1.02)} }
+
+        .flavor-burst { position:absolute; border-radius:50% 40% 60% 30%; opacity:.6; animation:cloudFloat 10s ease-in-out infinite; z-index:1; filter:blur(1px); }
+        .flavor-burst.burst1 { background:radial-gradient(circle,#00c6ff,#0072ff,rgba(0,198,255,0.3)); width:200px;height:150px; top:15%; left:8%; animation-delay:0s;}
+        .flavor-burst.burst2 { background:radial-gradient(circle,#7fdfb0,#5cb85c,rgba(127,223,176,0.3)); width:180px;height:120px; top:25%; right:12%; animation-delay:1.5s;}
+        .flavor-burst.burst3 { background:radial-gradient(circle,#ff9500,#ff6600,rgba(255,149,0,0.3)); width:220px;height:160px; bottom:35%; left:15%; animation-delay:3s;}
+        .flavor-burst.burst4 { background:radial-gradient(circle,#1a1a1a,#4a4a4a,rgba(255,0,128,0.4)); width:160px;height:130px; bottom:20%; right:8%; animation-delay:4.5s; box-shadow:0 0 30px #ff0080;}
+        .flavor-burst.burst5 { background:radial-gradient(circle,#ffb347,#ff6961,rgba(255,179,71,0.3)); width:190px;height:140px; top:55%; left:45%; transform:translateX(-50%); animation-delay:6s;}
+        .flavor-burst.burst6 { background:radial-gradient(circle,#00c6ff,#0072ff,rgba(0,198,255,0.2)); width:140px;height:110px; top:35%; right:35%; animation-delay:2s;}
+        .flavor-burst.burst7 { background:radial-gradient(circle,#7fdfb0,#5cb85c,rgba(127,223,176,0.2)); width:170px;height:125px; bottom:55%; left:5%; animation-delay:3.5s;}
+        .flavor-burst.burst8 { background:radial-gradient(circle,#ff9500,#ff6600,rgba(255,149,0,0.2)); width:130px;height:100px; top:10%; left:35%; animation-delay:5s;}
+        .flavor-burst.burst9 { background:radial-gradient(circle,#ffb347,#ff6961,rgba(255,179,71,0.2)); width:110px;height:90px; bottom:10%; left:30%; animation-delay:7s;}
+        .flavor-burst.burst10 { background:radial-gradient(circle,#1a1a1a,#4a4a4a,rgba(255,0,128,0.3)); width:150px;height:120px; top:70%; right:25%; animation-delay:8s; box-shadow:0 0 20px #ff0080;}
+
+        @keyframes cloudFloat {
+            0%,100%{ transform:translateY(0) translateX(0) rotate(0) scale(1); opacity:.4; border-radius:50% 40% 60% 30%; }
+            25%{ transform:translateY(-40px) translateX(20px) rotate(90deg) scale(1.2); opacity:.7; border-radius:40% 60% 30% 50%; }
+            50%{ transform:translateY(-80px) translateX(-15px) rotate(180deg) scale(.9); opacity:.9; border-radius:60% 30% 50% 40%; }
+            75%{ transform:translateY(-50px) translateX(30px) rotate(270deg) scale(1.1); opacity:.6; border-radius:30% 50% 40% 60%; }
+        }
+
+        /* Features Section */
+        .features { padding:6rem 0; background:white; color:#111; }
+        .features h2 { text-align:center; font-size:3rem; font-weight:700; margin-bottom:3rem; background:linear-gradient(45deg,#667eea,#764ba2); -webkit-background-clip:text; -webkit-text-fill-color:transparent;}
+        .features-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:2rem; }
+        .feature-card { background:white; padding:2rem; border-radius:20px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.1); transition:all .3s ease; border:2px solid transparent; }
+        .feature-card:hover { transform:translateY(-10px); box-shadow:0 20px 50px rgba(0,0,0,0.15); border-color:#ff6b6b; }
+        .feature-icon { width:80px;height:80px;margin:0 auto 1rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;background:linear-gradient(45deg,#ff6b6b,#4ecdc4); }
+        .feature-card h3 { font-size:1.25rem; font-weight:600; margin-bottom:.6rem; color:#333; }
+        .feature-card p { color:#666; line-height:1.6; }
+
+        /* Flavors */
+        .flavors { padding:6rem 0; background:linear-gradient(135deg,#ff9a9e 0%,#fecfef 50%,#a8edea 100%); }
+        .flavors h2 { text-align:center; font-size:3rem; font-weight:700; margin-bottom:3rem; color:white; text-shadow:2px 2px 4px rgba(0,0,0,0.25); }
+        .flavor-carousel { display:flex; gap:2rem; overflow-x:auto; padding:2rem 0; scroll-snap-type:x mandatory; }
+        .flavor-item { min-width:250px; background:white; border-radius:20px; padding:2rem; text-align:center; scroll-snap-align:start; box-shadow:0 15px 35px rgba(0,0,0,0.1); transition:all .3s ease; cursor:pointer; }
+        .flavor-item:hover { transform:scale(1.05); box-shadow:0 20px 50px rgba(0,0,0,0.2); }
+        .flavor-pod { width:100px;height:150px;margin:0 auto 1rem;border-radius:50px 50px 25px 25px; animation:bounce 2s ease-in-out infinite; }
+
+        @keyframes bounce { 0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)} }
+
+        /* Footer */
+        footer { background:#1a1a1a; color:white; padding:3rem 0; text-align:center; }
+        .footer-content { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:2rem; margin-bottom:2rem; }
+        .footer-section h3 { margin-bottom:1rem; color:#ff6b6b; }
+        .footer-section a { color:#ccc; text-decoration:none; transition:color .25s ease; }
+        .footer-section a:hover { color:#ff6b6b; }
+
+        /* Bubble helper */
+        .bubble { position:absolute; border-radius:50%; background:rgba(255,255,255,0.08); animation:bubbleFloat 8s linear infinite; pointer-events:none; }
+        @keyframes bubbleFloat { 0% { transform:translateY(100vh) scale(0); opacity:1;} 100%{ transform:translateY(-100px) scale(1); opacity:0;} }
+
+        /* Modal Popup */
+        .modal { display:none; position:fixed; z-index:3000; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.7); }
+        .modal-content { background:#fff; margin:5% auto; border-radius:15px; width:90%; max-width:900px; box-shadow:0 10px 30px rgba(0,0,0,0.5); position:relative; min-height:400px; }
+        .modal-inner { padding:0; border-radius:15px; overflow:hidden; }
+        .modal-content iframe { width:100%; height:80vh; border:none; display:block; }
+        .close { position:absolute; top:10px; right:16px; color:#333; font-size:30px; font-weight:bold; cursor:pointer; z-index:10; background:transparent; border:none; }
+        .close:hover { color:#ff6b6b; }
+
+        /* Responsive tweaks */
+        @media (max-width: 980px) {
+            .hero-content { grid-template-columns:1fr; text-align:center; }
+            .pod-container { width:300px; height:300px; margin:0 auto; }
+            .brand-text { font-size:4rem; }
+            .flavor-burst { width:100px; height:80px; }
+            .modal-content iframe { height:75vh; }
+        }
+        @media (max-width: 480px) {
+            .cta-button { padding:.8rem 1rem; font-size:.95rem; }
+            .modal-content iframe { height:85vh; }
+        }
+
+        /* Animations */
+        @keyframes gradientShift { 0%,100%{background-position:0% 50%}50%{background-position:100% 50%} }
+        @keyframes slideInLeft { from{transform:translateX(-100px);opacity:0} to{transform:translateX(0);opacity:1} }
+        @keyframes slideInRight { from{transform:translateX(100px);opacity:0} to{transform:translateX(0);opacity:1} }
+        @keyframes float { 0%,100%{transform:translateY(0px) rotate(0)} 50%{transform:translateY(-20px) rotate(5deg)} }
+       /* Force site to fit phone screen */
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+img, iframe, .pod-container, .flavor-carousel, .modal-content {
+  max-width: 100%;
+}
+
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">POP&SIP</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#flavors">Flavors</a></li>
+                <li><a href="#about">About</a></li>
+                
+            </ul>
+        </nav>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>POP & SIP</h1>
+                    <div class="subtitle">Flavor Revolution in Every Pod!</div>
+                    <p>Transform your ordinary drinks into extraordinary flavor experiences with our innovative syrup pods. Just pop, mix, and sip your way to deliciousness!</p>
+                    <a href="#flavors" class="cta-button">Discover Flavors</a>
+                    <a href="javascript:void(0)" class="cta-button" onclick="openForm()">Custom Order</a>
+                </div>
+
+                <div class="hero-visual" aria-hidden="true">
+                    <div class="pod-container">
+                        <div class="pod blue-lagoon" data-flavor="Blue Lagoon"></div>
+                        <div class="pod mojito" data-flavor="Mo-jito"></div>
+                        <div class="pod o-ranger" data-flavor="O-Ranger"></div>
+                        <div class="pod black-bijli" data-flavor="Black Bijli"></div>
+                        <div class="pod peachy-ice-t" data-flavor="Peachy Ice-T"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMPANY BRAND -->
+    <section class="company-brand" aria-hidden="true">
+        <div class="brand-text">POP&SIP</div>
+        <div class="flavor-burst burst1"></div>
+        <div class="flavor-burst burst2"></div>
+        <div class="flavor-burst burst3"></div>
+        <div class="flavor-burst burst4"></div>
+        <div class="flavor-burst burst5"></div>
+        <div class="flavor-burst burst6"></div>
+        <div class="flavor-burst burst7"></div>
+        <div class="flavor-burst burst8"></div>
+        <div class="flavor-burst burst9"></div>
+        <div class="flavor-burst burst10"></div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features" id="about">
+        <div class="container">
+            <h2>Why Choose POP&SIP?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>Instant Flavor</h3>
+                    <p>Revolutionary pod technology delivers rich, authentic flavors in seconds. No mixing, no mess, just pure taste perfection.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌱</div>
+                    <h3>Amazing Ingredients</h3>
+                    <p>Made with premium extracts. Clean, pure, and deliciously flavourful.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">♻️</div>
+                    <h3>Eco-Friendly</h3>
+                    <p>Reusable pods and sustainable packaging. Enjoy great taste while caring for our planet.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Perfect Portions</h3>
+                    <p>Each pod delivers the ideal flavor intensity every time. No guesswork, no waste, just consistent deliciousness.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FLAVORS -->
+    <section class="flavors" id="flavors">
+        <div class="container">
+            <h2>Explore Our Flavors</h2>
+            <div class="flavor-carousel" role="list">
+                <div class="flavor-item" onclick="showFlavorInfo('Blue Lagoon')" role="listitem" tabindex="0">
+                    <div class="flavor-pod" style="background: linear-gradient(135deg, #00c6ff, #0072ff);"></div>
+                    <h3>Blue Lagoon</h3>
+                    <p>Tropical blue curacao with ocean vibes</p>
+                </div>
+                <div class="flavor-item" onclick="showFlavorInfo('Mo-jito')" role="listitem" tabindex="0">
+                    <div class="flavor-pod" style="background: linear-gradient(135deg, #7fdfb0, #5cb85c);"></div>
+                    <h3>Mo-jito</h3>
+                    <p>Refreshing mint with lime zest</p>
+                </div>
+                <div class="flavor-item" onclick="showFlavorInfo('O-Ranger')" role="listitem" tabindex="0">
+                    <div class="flavor-pod" style="background: linear-gradient(135deg, #ff9500, #ff6600);"></div>
+                    <h3>O-Ranger</h3>
+                    <p>Bold orange burst with citrus kick</p>
+                </div>
+                <div class="flavor-item" onclick="showFlavorInfo('Black Bijli')" role="listitem" tabindex="0">
+                    <div class="flavor-pod" style="background: linear-gradient(135deg, #1a1a1a, #4a4a4a); border: 2px solid #ff0080;"></div>
+                    <h3>Black Bijli</h3>
+                    <p>Electric Black Current with thunderous energy</p>
+                </div>
+                <div class="flavor-item" onclick="showFlavorInfo('Peachy Ice-T')" role="listitem" tabindex="0">
+                    <div class="flavor-pod" style="background: linear-gradient(135deg, #ffb347, #ff6961);"></div>
+                    <h3>Peachy Ice-T</h3>
+                    <p>Sweet peach meets iced tea perfection</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODAL: Google Form embed -->
+    <div id="orderModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="orderModalTitle" tabindex="-1">
+      <div class="modal-content" role="document">
+        <button class="close" aria-label="Close form" id="modalCloseBtn">&times;</button>
+        <div class="modal-inner">
+          <!-- Replace EXAMPLE_FORM_ID with your form's embed URL -->
+          <iframe id="gfIframe" src="https://docs.google.com/forms/d/e/1FAIpQLSdAw-8UF_NN-ucyeEjjpxQfry-VWhn4TYu9zvNfsxCmeqLfEg/viewform?embedded=true" title="Custom order form">Loading…</iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>Email: popndsip@gmail.com</p>
+                    <p>Phone: +91-7042969100</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Follow Us</h3>
+                    <a href="https://www.instagram.com/popndsip_?igsh=MXVzZTZmaXQ3Zm1wYg==">Instagram</a><br>
+                </div>
+                <div class="footer-section">
+                    <h3>About POP&SIP</h3>
+                    <p>Revolutionizing beverages, one pod at a time. Join the flavor revolution!</p>
+                </div>
+            </div>
+            <p>&copy; 2025 POP&SIP. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Tooltip for pods
+        document.querySelectorAll('.pod').forEach(pod => {
+            pod.addEventListener('mouseenter', function() {
+                const flavor = this.getAttribute('data-flavor') || '';
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                tooltip.textContent = flavor;
+                tooltip.style.cssText = `
+                    position: absolute;
+                    background: rgba(0,0,0,0.85);
+                    color: #fff;
+                    padding: 8px 12px;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    pointer-events: none;
+                    z-index: 10000;
+                    top: -40px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    white-space: nowrap;
+                `;
+                this.appendChild(tooltip);
+            });
+            pod.addEventListener('mouseleave', function() {
+                const t = this.querySelector('.tooltip');
+                if (t) t.remove();
+            });
+        });
+
+        // Bubble generator (decorative)
+        function createBubble(){
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            bubble.style.left = Math.random() * 100 + 'vw';
+            const size = Math.random() * 60 + 20;
+            bubble.style.width = bubble.style.height = size + 'px';
+            bubble.style.animationDelay = Math.random() * 2 + 's';
+            document.body.appendChild(bubble);
+            setTimeout(()=> bubble.remove(), 8000);
+        }
+        setInterval(createBubble, 3000);
+
+        // Smooth scrolling for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const el = document.querySelector(this.getAttribute('href'));
+                if(!el) return;
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        // Flavor info quick popup
+        function showFlavorInfo(flavorName){
+            alert(`🎉 ${flavorName}\n\nComing soon — sign up via Custom Order to request this flavor!`);
+        }
+
+        // Sticky header background toggle
+        window.addEventListener('scroll', function(){
+            const header = document.querySelector('header');
+            if(window.scrollY > 100) header.style.background = 'rgba(255,255,255,0.98)';
+            else header.style.background = 'rgba(255,255,255,0.95)';
+        });
+
+        // Pod click effect
+        document.querySelectorAll('.pod').forEach(p => {
+            p.addEventListener('click', function(){
+                this.style.transform = 'scale(1.18) rotate(6deg)';
+                setTimeout(()=> this.style.transform = '', 300);
+            });
+        });
+
+        // Modal controls
+        const orderModal = document.getElementById('orderModal');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+        const lastFocused = { el: null };
+
+        function openForm(){
+            lastFocused.el = document.activeElement;
+            orderModal.style.display = 'block';
+            // wait a tick then focus close button for accessibility
+            setTimeout(()=> modalCloseBtn.focus(), 50);
+            // prevent background scroll
+            document.body.style.overflow = 'hidden';
+        }
+        function closeForm(){
+            orderModal.style.display = 'none';
+            document.body.style.overflow = '';
+            if(lastFocused.el) lastFocused.el.focus();
+        }
+
+        // Close modal on clicking outside content
+        window.addEventListener('click', function(e){
+            if(e.target === orderModal) closeForm();
+        });
+        // Close via button
+        modalCloseBtn.addEventListener('click', closeForm);
+        // Close on Escape
+        window.addEventListener('keydown', function(e){
+            if(e.key === 'Escape' && orderModal.style.display === 'block') closeForm();
+        });
+
+        // Optional: Allow mobile-friendly resizing of iframe by swapping src only when opening (lazy load)
+        // (Uncomment if desired: avoids loading form until user opens modal)
+        /*
+        const gfIframe = document.getElementById('gfIframe');
+        const gfSrc = gfIframe.getAttribute('data-src'); // if moved to data-src
+        function openFormLazy(){
+            if(!gfIframe.src || gfIframe.src.indexOf('EXAMPLE_FORM_ID') !== -1){
+                gfIframe.src = gfSrc || gfIframe.src;
+            }
+            openForm();
+        }
+        */
+
+    </script>
+</body>
+</html>
